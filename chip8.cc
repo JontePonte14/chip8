@@ -107,6 +107,49 @@ void chip8::opcodeDecoderExecuter(){
         registers[x] = registers[x] + kk;
         pc = pc + 2;
         break;
+    
+    case 0x8000:
+        switch (opcode & 0x000F)
+        {
+            case 0x0000:
+                // LD Vx, Vy
+                registers[x] = registers[y];
+                pc = pc + 2;
+                break;
+            
+            case 0x0001:
+                // OR Vx, Vy
+                registers[x] = registers[x] | registers[y];
+                pc = pc + 2;
+            
+            case 0x0002:
+                // AND Vx, Vy
+                registers[x] = registers[x] & registers[y];
+                pc = pc + 2;
+
+            case 0x0003:
+                // XOR Vx, Vy
+                registers[x] = registers[x] ^ registers[y];
+                pc = pc + 2;
+            
+            case 0x0004:
+                // Add Vx, Vy, set VF = carry
+                uint16_t result = registers[x] + registers[y];
+                if (result > 255) { // We have overflow
+                    registers[15] = 1;
+                } else {
+                    registers[15] = 0;
+                }
+                registers[x] = result & 0x0F >> 4;
+                pc = pc + 2;
+            
+            
+
+            default:
+                std::cerr << "Unknown opcode: " << opcode << std::endl;
+                break;
+        }
+
 
     
     //Set I = nnn.
