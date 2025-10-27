@@ -147,7 +147,54 @@ void chip8::opcodeDecoderExecuter(){
                 pc = pc + 2;
                 break;
             }
+
+            case 0x0005: {
+                // SUB Vx, Vy
+                if (registers[x] > registers[y]) {
+                    registers[15] = 1;
+                } else {
+                    registers[15] = 0;
+                }
+                registers[x] = registers[x] - registers[y];
+                pc += 2;
+                break;
+            }
+
+            case 0x0006:
+                // SHR Vx {, Vy}
+                registers[x] = registers[x] >> 1;
+                if (registers[x] % 2 == 0) {
+                    registers[0xF] = 0;
+                } else {
+                    registers[0xF] = 1;
+                }
+                pc +=2;
+                break;
+
+            case 0x0007:
+                // SUBN Vx, Vy
+                if (registers[y] > registers[x]) {
+                    registers[15] = 1;
+                } else {
+                    registers[15] = 0;
+                }
+                registers[x] = registers[y] - registers[x];
+                pc += 2;
+                break;
             
+            case 0x000E:
+                // SHL Vx {, Vy}
+                // If Vx is greater than or equal 128
+                // i.e msb is 1
+                if (registers[x] & 0x80) {
+                    registers[0xF] = 1;
+                } else {
+                    registers[0xF] = 0;
+                }
+                registers[x] = registers[x] << 1;
+                pc +=2;
+                break;
+
             default:
                 std::cerr << "Unknown opcode: " << opcode << std::endl;
                 break;
@@ -156,13 +203,33 @@ void chip8::opcodeDecoderExecuter(){
         break;
     }
 
-
-    
-    //Set I = nnn.
-    case 0xA000:
-        index = opcode & 0x0FFF;
-        pc = pc + 2;
+    case 0x9000:
+        // SNE Vx, Vy
+        if (registers[x] != registers[y]) {
+            pc += 4;
+        } else {
+            pc += 2;
+        }
         break;
+    
+    case 0xA000:
+        // LD I, addr
+        //Set I = nnn.    
+        index = opcode & 0x0FFF;
+        pc += 2;
+        break;
+
+    case 0xB000:
+        // JP V0, addr
+        pc = nnn + registers[0];
+        break;
+
+    case 0xC000: {
+        // RND Vx, byte
+        uint8_t randomNbr;
+        pc += 2;
+        break;
+        }
     
     default:
         std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
