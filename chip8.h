@@ -44,19 +44,19 @@ public:
     ~chip8() = default;
 
     // Initialize memory and registers once
-    void chip8::initialize();
+    void initialize();
     
     // Fetch opcode, Decode opcode, Execute opcode, Update timers
-    void chip8::emulateCycle();
+    void emulateCycle();
 
     // Updates the PC-counter
     // TODO: 
     // 1. Being able to choose address from stack
     // 2. Proper wrap around the memory
-    void chip8::updatePC();
+    void updatePC();
 
     // Decode opcode
-    void chip8::opcodeDecoderExecuter();
+    void opcodeDecoderExecuter();
 
 };
 #endif
