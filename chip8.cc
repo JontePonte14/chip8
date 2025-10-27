@@ -32,27 +32,53 @@ void chip8::opcodeDecoderExecuter(){
 
     switch (opcode & 0xF000)
     {
-    
-    // Opcode that starts with zero
     case 0x0000:
-
-        // Clear the display.
         // CLS
         if (opcode == 0x00E0){
-
+            pc = pc + 2;
         }
         // RET
-        //  Return from a subroutine. 
         else if (opcode == 0x00EE){
-
+            pc = pc + 2;
         }
-        // SYS addr
-        // Jump to a machine code routine at nnn. 
+        // Error
         else {
-            pc = opcode & 0x0FFF;
+            std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
         }
-
         break;
+    
+    case 0x1000:
+        // JP addr
+        pc = opcode & 0x0FFF;
+        break;
+    
+    case 0x2000:
+        // CALL addr
+        sp = sp + 1;
+        stack[sp] = pc;
+        pc = opcode & 0x0FFF;
+        break;
+
+    case 0x300:
+        // SE Vx, byte
+        unsigned int address = 0x0F00 & opcode;
+        if (registers[address] == (0x00FF & opcode)) {
+            pc = pc + 4;
+        } else {
+            pc = pc + 2;
+        }
+        break;
+    
+    case 0x400:
+        // SNE Vx, byte
+        unsigned int address = 0x0F00 & opcode;
+        if (registers[address] != (0x00FF & opcode)) {
+            pc = pc + 4;
+        } else {
+            pc = pc + 2;
+        }
+        break;
+        
     //Set I = nnn.
     case 0xA000:
         index = opcode & 0x0FFF;
