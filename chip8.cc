@@ -42,6 +42,7 @@ void chip8::opcodeDecoderExecuter(){
     uint8_t n = (opcode & 0x000F);
     uint16_t kk = (opcode & 0x00FF);
     uint16_t nnn = (opcode & 0x0FFF);
+
     switch (opcode & 0xF000)
     {
     case 0x0000:
@@ -263,7 +264,6 @@ void chip8::opcodeDecoderExecuter(){
             } else {
                 pc += 2;
             }
-
             break;
         
         default:
@@ -273,6 +273,72 @@ void chip8::opcodeDecoderExecuter(){
         break;
     }
 
+    case 0xF000: {
+        switch (opcode & 0x00FF)
+        {
+        case 0x0007:
+            // LD Vx, DT
+            registers[x] = delayTimer;
+            pc += 2;
+            break;
+        
+        case 0x000A:
+            // LD Vx, K
+            // complex so lets move on for now
+            pc += 2;
+            break;
+
+        case 0x0015:
+            // LD DT, Vx
+            delayTimer = registers[x];
+            pc += 2;
+            break;
+        
+        case 0x0018:
+            // LD ST, Vx
+            soundTimer = registers[x];
+            pc += 2;
+            break;
+        
+        case 0x001E:
+            // ADD I, Vx
+            index = index + registers[x];
+            pc += 2;
+            break;
+        
+        case 0x0029:
+            // LD F, Vx
+            index = registers[x] * 5;
+            pc += 2;
+            break;
+        
+        case 0x0033:
+            // LD B, Vx
+
+            break;
+
+        case 0x0055:
+            // LD [I], Vx
+            for (int i = 0; i < x; i++){
+                memory[index+i] = registers[i];
+            }
+
+            break;
+
+        case 0x0065:
+            // LD Vx, [I]  
+            for (int i = 0; i < x; i++) {
+                registers[i] = memory[index + i];
+            }  
+
+            break;
+        
+        default:
+            std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
+            break;
+        }
+        break;
+    }
     
     default:
         std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
