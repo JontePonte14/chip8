@@ -1,5 +1,9 @@
 #include "chip8.h"
 #include <iostream>
+#include <random>
+
+std::mt19937 rng{std::random_device{}()};
+std::uniform_int_distribution<int> dist(0, 255);
 
 chip8::chip8(){
 
@@ -226,10 +230,49 @@ void chip8::opcodeDecoderExecuter(){
 
     case 0xC000: {
         // RND Vx, byte
-        uint8_t randomNbr;
+        uint8_t randomNbr = static_cast<uint8_t>(dist(rng));
+        registers[x] = randomNbr & kk;
         pc += 2;
         break;
         }
+
+    case 0xD000: {
+        // DRW Vx, Vy, nibble
+        // A lot of text, lets move on
+
+        break;
+    }
+
+    case 0xE000: {
+        switch (opcode & 0x00FF)
+        {
+        case 0x009E:
+            // SKPP Vx
+            // Keypad in down position 1 or zero? Needs to be checked
+            if (keypad[registers[x]]) {
+                pc += 4;
+            } else {
+                pc += 2;
+            }
+            break;
+        
+        case 0x00A1:
+            // SKNP Vx
+            if (!keypad[registers[x]]) {
+                pc += 4;
+            } else {
+                pc += 2;
+            }
+
+            break;
+        
+        default:
+            std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
+            break;
+        }
+        break;
+    }
+
     
     default:
         std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
@@ -240,3 +283,5 @@ void chip8::opcodeDecoderExecuter(){
 void chip8::updatePC(){
     pc = pc + 2;
 }
+
+
