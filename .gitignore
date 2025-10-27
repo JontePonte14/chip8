@@ -1,0 +1,23 @@
+# Compiled object files
+*.o
+*.obj
+
+# Compiled binaries
+testChip8
+chip8
+*.exe
+*.out
+
+# Build folders
+/build/
+bin/
+dist/
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
