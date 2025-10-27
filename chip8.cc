@@ -33,7 +33,11 @@ void chip8::emulateCycle(){
 }
 
 void chip8::opcodeDecoderExecuter(){
-
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
+    uint8_t n = (opcode & 0x000F);
+    uint16_t kk = (opcode & 0x00FF);
+    uint16_t nnn = (opcode & 0x0FFF);
     switch (opcode & 0xF000)
     {
     case 0x0000:
@@ -53,39 +57,60 @@ void chip8::opcodeDecoderExecuter(){
     
     case 0x1000:
         // JP addr
-        pc = opcode & 0x0FFF;
+        pc = nnn;
         break;
     
     case 0x2000:
         // CALL addr
         sp = sp + 1;
         stack[sp] = pc;
-        pc = opcode & 0x0FFF;
+        pc = nnn;
         break;
 
-    case 0x300:
+    case 0x3000:
         // SE Vx, byte
         //unsigned int address = 0x0F00 & opcode;
-        if (registers[0x0F00 & opcode] == (0x00FF & opcode)) {
+        if (registers[x] == kk) {
             pc = pc + 4;
         } else {
             pc = pc + 2;
         }
         break;
     
-    case 0x400:
+    case 0x4000:
         // SNE Vx, byte
-        0x0F00 & opcode;
-        if (registers[0x0F00 & opcode] != (0x00FF & opcode)) {
+        //0x0F00 & opcode;
+        if (registers[x] != kk) {
             pc = pc + 4;
         } else {
             pc = pc + 2;
         }
         break;
-        
+
+    case 0x5000:
+        // SE Vx, Vy
+        if (registers[x] != registers[y]) {
+            pc  = pc + 4;
+        } else {
+            pc = pc + 2;
+        }
+        break;
+
+    case 0x6000:
+        // LD Vx, byte
+        registers[x] = kk;
+        pc = pc + 2;
+        break;
+
+    case 0x7000:
+        // ADD Vx, byte
+        registers[x] = registers[x] + kk;
+        pc = pc + 2;
+        break;
+
     //Set I = nnn.
     case 0xA000:
-        index = opcode & 0x0FFF;
+        index = opcode & 0x0FFF;case
         pc = pc + 2;
         break;
     
