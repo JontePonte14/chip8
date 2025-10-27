@@ -40,7 +40,7 @@ public:
     };
 
 
-    chip8(/* args */);
+    chip8();
     ~chip8() = default;
 
     // Initialize memory and registers once

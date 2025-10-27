@@ -5,5 +5,4 @@ int main()
 {
     std::cout << "Testing file" << std::endl;
     chip8 chip;
-    return 0;
 }

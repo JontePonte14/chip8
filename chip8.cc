@@ -1,6 +1,10 @@
 #include "chip8.h"
 #include <iostream>
 
+chip8::chip8(){
+
+}
+
 void chip8::initialize(){
     pc = 0x200;
     opcode = 0;
@@ -61,8 +65,8 @@ void chip8::opcodeDecoderExecuter(){
 
     case 0x300:
         // SE Vx, byte
-        unsigned int address = 0x0F00 & opcode;
-        if (registers[address] == (0x00FF & opcode)) {
+        //unsigned int address = 0x0F00 & opcode;
+        if (registers[0x0F00 & opcode] == (0x00FF & opcode)) {
             pc = pc + 4;
         } else {
             pc = pc + 2;
@@ -71,8 +75,8 @@ void chip8::opcodeDecoderExecuter(){
     
     case 0x400:
         // SNE Vx, byte
-        unsigned int address = 0x0F00 & opcode;
-        if (registers[address] != (0x00FF & opcode)) {
+        0x0F00 & opcode;
+        if (registers[0x0F00 & opcode] != (0x00FF & opcode)) {
             pc = pc + 4;
         } else {
             pc = pc + 2;

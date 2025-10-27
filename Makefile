@@ -21,12 +21,9 @@ LDFLAGS = -g -lstdc++fs
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = testChip8
+PROGS = chip8
 
 all: $(PROGS)
-
-#test: test_coding
-#	./test_coding
 
 # Targets rely on implicit rules for compiling and linking
 
