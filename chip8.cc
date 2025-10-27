@@ -108,9 +108,10 @@ void chip8::opcodeDecoderExecuter(){
         pc = pc + 2;
         break;
 
+    
     //Set I = nnn.
     case 0xA000:
-        index = opcode & 0x0FFF;case
+        index = opcode & 0x0FFF;
         pc = pc + 2;
         break;
     
