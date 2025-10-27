@@ -108,7 +108,7 @@ void chip8::opcodeDecoderExecuter(){
         pc = pc + 2;
         break;
     
-    case 0x8000:
+    case 0x8000: {
         switch (opcode & 0x000F)
         {
             case 0x0000:
@@ -121,18 +121,21 @@ void chip8::opcodeDecoderExecuter(){
                 // OR Vx, Vy
                 registers[x] = registers[x] | registers[y];
                 pc = pc + 2;
-            
+                break;
+
             case 0x0002:
                 // AND Vx, Vy
                 registers[x] = registers[x] & registers[y];
                 pc = pc + 2;
+                break;
 
             case 0x0003:
                 // XOR Vx, Vy
                 registers[x] = registers[x] ^ registers[y];
                 pc = pc + 2;
+                break;
             
-            case 0x0004:
+            case 0x0004: {
                 // Add Vx, Vy, set VF = carry
                 uint16_t result = registers[x] + registers[y];
                 if (result > 255) { // We have overflow
@@ -140,15 +143,18 @@ void chip8::opcodeDecoderExecuter(){
                 } else {
                     registers[15] = 0;
                 }
-                registers[x] = result & 0x0F >> 4;
+                registers[x] = result; // takes the 8 lower bits by default
                 pc = pc + 2;
+                break;
+            }
             
-            
-
             default:
                 std::cerr << "Unknown opcode: " << opcode << std::endl;
                 break;
+        
         }
+        break;
+    }
 
 
     
