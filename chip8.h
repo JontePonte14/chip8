@@ -49,12 +49,6 @@ public:
     // Fetch opcode, Decode opcode, Execute opcode, Update timers
     void emulateCycle();
 
-    // Updates the PC-counter
-    // TODO: 
-    // 1. Being able to choose address from stack
-    // 2. Proper wrap around the memory
-    void updatePC();
-
     // Decode opcode
     void opcodeDecoderExecuter();
 

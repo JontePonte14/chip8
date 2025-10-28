@@ -312,25 +312,30 @@ void chip8::opcodeDecoderExecuter(){
             pc += 2;
             break;
         
-        case 0x0033:
+        case 0x0033:{
             // LD B, Vx
-
+            uint8_t nbr = registers[x];
+            memory[index] = nbr / 100;
+            memory[index+1] = (nbr / 10) % 10;
+            memory[index+2] = nbr % 10;
+            pc += 2;
             break;
+        }
 
         case 0x0055:
             // LD [I], Vx
-            for (int i = 0; i < x; i++){
+            for (int i = 0; i <= x; i++){
                 memory[index+i] = registers[i];
             }
-
+            pc += 2;
             break;
 
         case 0x0065:
             // LD Vx, [I]  
-            for (int i = 0; i < x; i++) {
+            for (int i = 0; i <= x; i++) {
                 registers[i] = memory[index + i];
             }  
-
+            pc += 2;
             break;
         
         default:
@@ -344,10 +349,6 @@ void chip8::opcodeDecoderExecuter(){
         std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
         break;
     }
-}
-
-void chip8::updatePC(){
-    pc = pc + 2;
 }
 
 
