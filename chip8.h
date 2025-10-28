@@ -2,7 +2,7 @@
 #define CHIP8
 #include <cstdint>
 #include <string>
-
+#include <chrono>
 
 class chip8
 {
@@ -22,6 +22,7 @@ public:
 	uint16_t opcode;
 
     bool drawflag;
+    std::chrono::steady_clock::time_point lastTimerTick;
 
     unsigned char chip8_fontset[80] =
     { 
@@ -62,6 +63,10 @@ public:
 
     // Decode opcode, and executes it
     void opcodeDecoderExecuter();
+
+    // Check if 1/60 s have passed
+    // since last call
+    bool sixtyHertzPassed();
 
     // Debugger: Prints out the first couple
     // of instruction to see if the loadProgram worked

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <chrono>
 
 using namespace std;
 namespace fs=std::filesystem;
@@ -29,6 +30,8 @@ void chip8::initialize(){
     for (int i = 0; i < 80; i++) {
         memory[i] = chip8_fontset[i];
     }
+
+    lastTimerTick = std::chrono::steady_clock::now();
 }
 
 void chip8::emulateCycle(){
@@ -37,11 +40,12 @@ void chip8::emulateCycle(){
     opcodeDecoderExecuter();
 
     //Update timers
-    if (delayTimer > 0) {
+    bool updateTimer = sixtyHertzPassed();
+    if (delayTimer > 0 && updateTimer) {
         delayTimer--;
     }
 
-    if (soundTimer > 0) {
+    if (soundTimer > 0 && updateTimer) {
         if (soundTimer == 1) {
             std::cout << "BEEEEEEEEEEEP" << std::endl;
         }
@@ -69,6 +73,7 @@ bool chip8::loadProgram(std::string& filename){
 
     if (0x200 + fileSize > sizeof(memory)) {
         cerr << "Error: ROM is too big" << endl;
+        return false;
     }
 
     for (uintmax_t i = 0; i < fileSize; i++){
@@ -449,6 +454,18 @@ void chip8::opcodeDecoderExecuter(){
         std::cerr << "Error: Unknown Opcode: " << opcode << std::endl;
         break;
     }
+
+
+}
+
+bool chip8::sixtyHertzPassed(){
+    auto currentTimerTick = chrono::steady_clock::now();
+    const static std::chrono::duration<double> deadline = std::chrono::duration<double>(1.0 / 60.0);
+    if (currentTimerTick - lastTimerTick >= deadline) {
+        lastTimerTick = currentTimerTick;
+        return true;
+    }
+    return false;
 }
 
 
