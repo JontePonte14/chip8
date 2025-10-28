@@ -49,7 +49,8 @@ public:
     void initialize();
 
     // Load the given program into the memory
-    void loadProgram(std::string& path);
+    // Note whole path to program must be given
+    void loadProgram(std::string& filename);
 
     // Store key press state (Press and release)
     void setKeys();

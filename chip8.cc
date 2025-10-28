@@ -1,6 +1,11 @@
 #include "chip8.h"
 #include <iostream>
 #include <random>
+#include <filesystem>
+#include <fstream>
+
+using namespace std;
+using namespace std::filesystem;
 
 std::mt19937 rng{std::random_device{}()};
 std::uniform_int_distribution<int> dist(0, 255);
@@ -42,6 +47,12 @@ void chip8::emulateCycle(){
         soundTimer--;
     }
 
+}
+
+void chip8::loadProgram(std::string& filename){
+    path filepath = filename;
+    ofstream file(filepath);
+    
 }
 
 void chip8::opcodeDecoderExecuter(){
