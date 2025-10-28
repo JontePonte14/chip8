@@ -19,6 +19,8 @@ public:
 	uint32_t video[64 * 32]{};
 	uint16_t opcode;
 
+    bool drawflag;
+
     unsigned char chip8_fontset[80] =
     { 
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -45,11 +47,17 @@ public:
 
     // Initialize memory and registers once
     void initialize();
+
+    // Load the given program into the memory
+    void loadProgram(std::string& path);
+
+    // Store key press state (Press and release)
+    void setKeys();
     
     // Fetch opcode, Decode opcode, Execute opcode, Update timers
     void emulateCycle();
 
-    // Decode opcode
+    // Decode opcode, and executes it
     void opcodeDecoderExecuter();
 
 };

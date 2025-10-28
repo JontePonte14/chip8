@@ -14,12 +14,10 @@ void chip8::initialize(){
     opcode = 0;
     index = 0;
     sp = 0;
-
-
-    // Clear display	
-    // Clear stack
-    // Clear registers V0-VF
-    // Clear memory
+    for (uint32_t& pixel : video) { pixel = 0;} // Clear display
+    for (uint16_t& address : stack) {address = 0;} // Clear address
+    for (uint8_t& reg : registers) {reg = 0;} // Clear registers V0-VF
+    for (uint8_t& instruction : memory) {instruction = 0;} // Clear memory
 
     // Loading fontset
     for (int i = 0; i < 80; i++) {
@@ -30,9 +28,19 @@ void chip8::initialize(){
 void chip8::emulateCycle(){
     // Fetches opcode using current pc
     opcode = memory[pc] << 8 | memory[pc + 1];
-    
-    //Deocde instruction
+    opcodeDecoderExecuter();
 
+    //Update timers
+    if (delayTimer > 0) {
+        delayTimer--;
+    }
+
+    if (soundTimer > 0) {
+        if (soundTimer == 1) {
+            std::cout << "BEEEEEEEEEEEP" << std::endl;
+        }
+        soundTimer--;
+    }
 
 }
 
@@ -46,9 +54,14 @@ void chip8::opcodeDecoderExecuter(){
     switch (opcode & 0xF000)
     {
     case 0x0000:
+        // CLS
         if (opcode == 0x00E0) {
-            // clear video[] here and mark redraw
+            for (uint32_t& pixel : video) {
+                pixel = 0;
+            }
+            drawflag = true;
             pc += 2;
+        // RET
         } else if (opcode == 0x00EE) {
             sp--;
             pc = stack[sp];
@@ -246,7 +259,30 @@ void chip8::opcodeDecoderExecuter(){
 
     case 0xD000: {
         // DRW Vx, Vy, nibble
-        // A lot of text, lets move on
+        registers[15] = 0; // Clear collision from previous instruction
+        for (int r = 0; r < n; r++){
+            uint8_t spriteByte = memory[index + r];
+            
+            for (int c = 0; c < 8; c++){
+                uint8_t spriteBit = (spriteByte >> (7-c)) & 0x01;
+
+                // We want to draw
+                if (spriteBit) {
+                    int xCoord = (registers[x] + c) % 64;
+                    int yCoord = (registers[y] + r) % 32;
+                    int pixelIndex = yCoord * 64 + xCoord;
+
+                    // Collision 
+                    if (video[pixelIndex]) {
+                        registers[15] = 1;
+                    }
+
+                    video[pixelIndex] = video[pixelIndex] ^ 1;
+                }
+
+            }
+        }
+        drawflag = true;
         pc += 2;
 
         break;
