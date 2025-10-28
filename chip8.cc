@@ -3,9 +3,10 @@
 #include <random>
 #include <filesystem>
 #include <fstream>
+#include <string>
 
 using namespace std;
-using namespace std::filesystem;
+namespace fs=std::filesystem;
 
 std::mt19937 rng{std::random_device{}()};
 std::uniform_int_distribution<int> dist(0, 255);
@@ -49,10 +50,32 @@ void chip8::emulateCycle(){
 
 }
 
-void chip8::loadProgram(std::string& filename){
-    path filepath = filename;
-    ofstream file(filepath);
-    
+bool chip8::loadProgram(std::string& filename){
+    fs::path filepath = filename;
+    if (!fs::exists(filepath)) {
+        cerr << "Error: Invalid filename, can't find the program" << endl;
+        return false;
+    }
+
+    uintmax_t fileSize = fs::file_size(filepath); // filesize/2 = nbr instructions
+    ifstream file(filepath, ios::binary);
+    std::vector<char> buffer(fileSize);
+    if (file.read(buffer.data(), fileSize)) {
+        // Worked
+    } else {
+        cerr << "Error: Couldn't read file" << endl;
+        return false;
+    }
+
+    if (0x200 + fileSize > sizeof(memory)) {
+        cerr << "Error: ROM is too big" << endl;
+    }
+
+    for (uintmax_t i = 0; i < fileSize; i++){
+        memory[0x200 + i] = static_cast<uint8_t>(buffer[i]);
+    }
+
+    return true;
 }
 
 void chip8::opcodeDecoderExecuter(){

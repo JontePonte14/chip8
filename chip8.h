@@ -1,6 +1,8 @@
 #ifndef CHIP8
 #define CHIP8
 #include <cstdint>
+#include <string>
+
 
 class chip8
 {
@@ -50,7 +52,7 @@ public:
 
     // Load the given program into the memory
     // Note whole path to program must be given
-    void loadProgram(std::string& filename);
+    bool loadProgram(std::string& filename);
 
     // Store key press state (Press and release)
     void setKeys();
