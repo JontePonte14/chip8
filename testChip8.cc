@@ -1,5 +1,6 @@
 #include "chip8.h"
 #include <iostream>
+#include <iomanip>
 
 int main()
 {
@@ -16,4 +17,11 @@ int main()
     }
 
     chip.printMemory();
+    std::cout << std::hex << std::setfill('0');
+    for (int i = 0; i < 10; i++) {
+        std::cout << "PC: 0x" << chip.pc << std::endl;
+        chip.emulateCycle();
+        std::cout << "opcode " << i << ": 0x" 
+            << std::setw(4) << chip.opcode << std::endl;
+    }
 }
