@@ -63,5 +63,9 @@ public:
     // Decode opcode, and executes it
     void opcodeDecoderExecuter();
 
+    // Debugger: Prints out the first couple
+    // of instruction to see if the loadProgram worked
+    void printMemory();
+
 };
 #endif

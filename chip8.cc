@@ -78,6 +78,20 @@ bool chip8::loadProgram(std::string& filename){
     return true;
 }
 
+void chip8::printMemory(){
+    cout << "Printing out the first bytes" << endl;
+    std::cout << std::hex << std::setfill('0');
+
+    for (int i = 0; i < 20; i = i + 2) {
+        uint8_t hi = memory[0x200 + i];
+        uint8_t lo = memory[0x200 + i + 1];
+        uint16_t doubleByte = (hi << 8) | lo; 
+
+    std::cout << "Instruction " << (i / 2) << ": 0x"
+              << std::setw(4) << doubleByte << std::endl;
+    }
+}
+
 void chip8::opcodeDecoderExecuter(){
     uint8_t x = (opcode & 0x0F00) >> 8;
     uint8_t y = (opcode & 0x00F0) >> 4;
