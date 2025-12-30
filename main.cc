@@ -1,15 +1,18 @@
 #include <SDL.h>
 #include "chip8.h"
 #include <iostream>
+#include <vector>
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 64;
+const int SCREEN_HEIGHT = 32;
 
 //int main(int argc, char *argv[])
 int main()
 {
+    bool gameIsRunning = true;
+
     // Loading program
     std::cout << "Testing file" << std::endl;
     chip8 chip;
@@ -24,18 +27,36 @@ int main()
     }
 
     // Starting to run window
-
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window *window = SDL_CreateWindow("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+    unsigned int scaler = 10;
+    SDL_CreateWindowAndRenderer(SCREEN_WIDTH*scaler, SCREEN_HEIGHT*scaler, 0, &window, &renderer);
+    SDL_RenderSetScale(renderer, scaler, scaler);
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    
+    std::vector<SDL_Point> points;
+    points.reserve(SCREEN_HEIGHT*SCREEN_WIDTH);
+
+    //chip.video[25] = 1; // Used to check out that function works
+    for (int y = 0; y < SCREEN_HEIGHT; y++) {
+        for (int x = 0; x < SCREEN_WIDTH; x++) {
+            if (chip.video[y*64 + x] != 0) { // Pixel is on
+                points.push_back(SDL_Point{x, y});
+            }
+        }
+    }
+
+    SDL_RenderDrawPoints(renderer, points.data(), static_cast<int>(points.size()));
+
+    //SDL_RenderDrawPoint(renderer, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 
     SDL_RenderPresent(renderer);
 
-    SDL_Delay(3000);
+    SDL_Delay(10000);
 
     return 0;
 }
