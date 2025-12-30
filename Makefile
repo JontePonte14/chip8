@@ -16,18 +16,25 @@ CXXFLAGS += -std=c++17
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
 LDFLAGS = -g -lstdc++fs
+SDL2_CFLAGS := $(shell sdl2-config --cflags)
+SDL2_LIBS   := $(shell sdl2-config --libs)
 #CPPFLAGS += -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = chip8
+PROGS = chip8 sdl_test
 
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
 
 chip8: testChip8.o chip8.o
+sdl_test: CPPFLAGS += $(SDL2_CFLAGS)
+sdl_test: LDLIBS   += $(SDL2_LIBS)
+sdl_test: main.o
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
 
 # Phony targets
 .PHONY: all test clean distclean
