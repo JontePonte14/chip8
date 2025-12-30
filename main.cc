@@ -17,8 +17,10 @@ int main()
     std::cout << "Testing file" << std::endl;
     chip8 chip;
     chip.initialize();
-    
-    std::string programName = "/home/jonathan/Documents/cpp_project/chip8/chip8-roms/games/Airplane.ch8";
+   
+    std::string programName = "/home/jonathan/Documents/cpp_project/chip8/chip8-roms/programs/Fishie [Hap, 2005].ch8";
+    //std::string programName = "/home/jonathan/Documents/cpp_project/chip8/chip8-roms/games/Airplane.ch8";
+    //std::string programName = "/home/jonathan/Documents/cpp_project/chip8/chip8-roms/games/Cave.ch8";
     if (chip.loadProgram(programName)){
         std::cout << "Succesfully loaded the program" << std::endl;
     } else {
@@ -31,32 +33,42 @@ int main()
     SDL_Renderer* renderer = nullptr;
     SDL_Init(SDL_INIT_EVERYTHING);
     unsigned int scaler = 10;
-    SDL_CreateWindowAndRenderer(SCREEN_WIDTH*scaler, SCREEN_HEIGHT*scaler, 0, &window, &renderer);
+    window = SDL_CreateWindow(
+        "Chip-8",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        SCREEN_WIDTH * scaler, SCREEN_HEIGHT * scaler,
+        SDL_WINDOW_SHOWN
+    );
+
+    renderer = SDL_CreateRenderer(
+        window,
+        -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
     SDL_RenderSetScale(renderer, scaler, scaler);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    
 
+    const int cyclesPerFrame = 20; 
     while (gameIsRunning) {
-
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 gameIsRunning = false;
             }
         }
-        
+        // for (int i = 0; i < 10; i++) {
         chip.emulateCycle();
+        // }
+
         if (chip.drawflag) {
             
             chip.drawflag = false;
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             
-
             std::vector<SDL_Point> points;
             points.reserve(SCREEN_HEIGHT*SCREEN_WIDTH);
 
@@ -67,13 +79,17 @@ int main()
                     }
                 }
             }
+
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             if (!points.empty()){
                 SDL_RenderDrawPoints(renderer, points.data(), static_cast<int>(points.size()));
             }
             SDL_RenderPresent(renderer);
         }
-        SDL_Delay(2);
     }
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();
 
     return 0;
 }
