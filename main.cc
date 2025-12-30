@@ -38,25 +38,42 @@ int main()
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     
-    std::vector<SDL_Point> points;
-    points.reserve(SCREEN_HEIGHT*SCREEN_WIDTH);
 
-    //chip.video[25] = 1; // Used to check out that function works
-    for (int y = 0; y < SCREEN_HEIGHT; y++) {
-        for (int x = 0; x < SCREEN_WIDTH; x++) {
-            if (chip.video[y*64 + x] != 0) { // Pixel is on
-                points.push_back(SDL_Point{x, y});
+    while (gameIsRunning) {
+
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                gameIsRunning = false;
             }
         }
+        
+        chip.emulateCycle();
+        if (chip.drawflag) {
+            
+            chip.drawflag = false;
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            
+
+            std::vector<SDL_Point> points;
+            points.reserve(SCREEN_HEIGHT*SCREEN_WIDTH);
+
+            for (int y = 0; y < SCREEN_HEIGHT; y++) {
+                for (int x = 0; x < SCREEN_WIDTH; x++) {
+                    if (chip.video[y*64 + x] != 0) { // Pixel is on
+                        points.push_back(SDL_Point{x, y});
+                    }
+                }
+            }
+            if (!points.empty()){
+                SDL_RenderDrawPoints(renderer, points.data(), static_cast<int>(points.size()));
+            }
+            SDL_RenderPresent(renderer);
+        }
+        SDL_Delay(2);
     }
-
-    SDL_RenderDrawPoints(renderer, points.data(), static_cast<int>(points.size()));
-
-    //SDL_RenderDrawPoint(renderer, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-
-    SDL_RenderPresent(renderer);
-
-    SDL_Delay(10000);
 
     return 0;
 }
