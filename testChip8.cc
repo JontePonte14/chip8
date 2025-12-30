@@ -12,7 +12,7 @@ int main()
     if (chip.loadProgram(programName)){
         std::cout << "Succesfully loaded the program" << std::endl;
     } else {
-        std::cout << "Shutting down program" << std::endl;
+        std::cout << "Failed loading the program, Shutting down program" << std::endl;
         return 1;
     }
 
