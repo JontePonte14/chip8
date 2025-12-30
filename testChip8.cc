@@ -16,6 +16,14 @@ int main()
         return 1;
     }
 
+    //chip.emulateCycle();
+    // for (int i = 0; i < 2024; i++){
+    //     chip.emulateCycle();
+    //     std::cout << chip.video[i] << std::endl;
+    
+    // }
+    
+
     chip.printMemory();
     std::cout << std::hex << std::setfill('0');
     for (int i = 0; i < 10; i++) {

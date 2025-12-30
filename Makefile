@@ -32,7 +32,7 @@ all: $(PROGS)
 chip8: testChip8.o chip8.o
 sdl_test: CPPFLAGS += $(SDL2_CFLAGS)
 sdl_test: LDLIBS   += $(SDL2_LIBS)
-sdl_test: main.o
+sdl_test: main.o chip8.o
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 
